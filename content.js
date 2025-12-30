@@ -133,11 +133,20 @@
      * Remove the mini player option from context menus
      */
     function removeMiniPlayerFromContextMenu() {
-        // Find all menu items and remove the one for mini player
-        const menuItems = document.querySelectorAll('ytd-menu-service-item-renderer, tp-yt-paper-item');
-        menuItems.forEach(item => {
+        // YouTube page menu items (three-dot menus, etc.)
+        const pageMenuItems = document.querySelectorAll('ytd-menu-service-item-renderer, tp-yt-paper-item');
+        pageMenuItems.forEach(item => {
             const text = item.textContent?.toLowerCase() || '';
             if (text.includes('mini player') || text.includes('miniplayer')) {
+                item.style.display = 'none';
+            }
+        });
+
+        // Video player right-click context menu items
+        const playerMenuItems = document.querySelectorAll('.ytp-menuitem, .ytp-panel-menu .ytp-menuitem');
+        playerMenuItems.forEach(item => {
+            const text = item.textContent?.toLowerCase() || '';
+            if (text.includes('miniplayer') || text.includes('mini player')) {
                 item.style.display = 'none';
             }
         });
@@ -156,21 +165,42 @@
                             if (node.tagName === 'YTD-MENU-POPUP-RENDERER' ||
                                 node.tagName === 'TP-YT-IRON-DROPDOWN' ||
                                 node.classList?.contains('ytp-popup') ||
-                                node.querySelector?.('ytd-menu-service-item-renderer')) {
+                                node.classList?.contains('ytp-contextmenu') ||
+                                node.querySelector?.('ytd-menu-service-item-renderer') ||
+                                node.querySelector?.('.ytp-menuitem')) {
                                 // Small delay to ensure menu items are rendered
                                 setTimeout(removeMiniPlayerFromContextMenu, 10);
                                 setTimeout(removeMiniPlayerFromContextMenu, 50);
+                                setTimeout(removeMiniPlayerFromContextMenu, 100);
                             }
                         }
                     }
+                }
+                
+                // Also check for attribute changes that might show a menu
+                if (mutation.type === 'attributes' && 
+                    (mutation.target.classList?.contains('ytp-contextmenu') ||
+                     mutation.target.classList?.contains('ytp-popup'))) {
+                    setTimeout(removeMiniPlayerFromContextMenu, 10);
+                    setTimeout(removeMiniPlayerFromContextMenu, 50);
                 }
             }
         });
 
         observer.observe(document.body, {
             childList: true,
-            subtree: true
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class', 'hidden']
         });
+
+        // Also listen for contextmenu events to catch right-clicks
+        document.addEventListener('contextmenu', () => {
+            setTimeout(removeMiniPlayerFromContextMenu, 10);
+            setTimeout(removeMiniPlayerFromContextMenu, 50);
+            setTimeout(removeMiniPlayerFromContextMenu, 100);
+            setTimeout(removeMiniPlayerFromContextMenu, 200);
+        }, true);
     }
 
     /**
