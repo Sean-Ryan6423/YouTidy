@@ -1,0 +1,45 @@
+name: Build Release
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create extension zip
+        run: |
+          mkdir -p Hide-YouTube-Mini-Player
+          cp manifest.json Hide-YouTube-Mini-Player/
+          cp content.js Hide-YouTube-Mini-Player/
+          cp popup.html Hide-YouTube-Mini-Player/
+          cp popup.js Hide-YouTube-Mini-Player/
+          cp -r icons Hide-YouTube-Mini-Player/
+          zip -r Hide-YouTube-Mini-Player.zip Hide-YouTube-Mini-Player
+
+      - name: Upload zip to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: Hide-YouTube-Mini-Player.zip
+          append_body: true
+          body: |
+            
+            ## Installation
+            
+            1. Download `Hide-YouTube-Mini-Player.zip` below
+            2. Extract the zip file to a folder
+            3. Open Chrome and go to `chrome://extensions/`
+            4. Enable **Developer mode** (toggle in top right)
+            5. Click **Load unpacked**
+            6. Select the extracted `Hide-YouTube-Mini-Player` folder
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
