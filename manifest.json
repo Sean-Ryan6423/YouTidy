@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Hide YouTube Mini Player",
+  "version": "1.0",
+  "description": "Automatically closes the YouTube mini player and disables the 'i' hotkey that opens it",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Hide YouTube Mini Player",
+    "default_icon": "icons/icon.svg"
+  },
+  "icons": {
+    "128": "icons/icon.svg"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+
