@@ -17,29 +17,30 @@ jobs:
 
       - name: Create extension zip
         run: |
-          mkdir -p Hide-YouTube-Mini-Player
-          cp manifest.json Hide-YouTube-Mini-Player/
-          cp content.js Hide-YouTube-Mini-Player/
-          cp popup.html Hide-YouTube-Mini-Player/
-          cp popup.js Hide-YouTube-Mini-Player/
-          cp -r icons Hide-YouTube-Mini-Player/
-          zip -r Hide-YouTube-Mini-Player.zip Hide-YouTube-Mini-Player
+          mkdir -p YouTidy
+          cp manifest.json YouTidy/
+          cp content.js YouTidy/
+          cp popup.html YouTidy/
+          cp popup.js YouTidy/
+          cp LICENSE YouTidy/
+          cp -r icons YouTidy/
+          zip -r YouTidy.zip YouTidy
 
       - name: Upload zip to release
         uses: softprops/action-gh-release@v1
         with:
-          files: Hide-YouTube-Mini-Player.zip
+          files: YouTidy.zip
           append_body: true
           body: |
             
             ## Installation
             
-            1. Download `Hide-YouTube-Mini-Player.zip` below
+            1. Download `YouTidy.zip` below
             2. Extract the zip file to a folder
             3. Open Chrome and go to `chrome://extensions/`
             4. Enable **Developer mode** (toggle in top right)
             5. Click **Load unpacked**
-            6. Select the extracted `Hide-YouTube-Mini-Player` folder
+            6. Select the extracted `YouTidy` folder
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
