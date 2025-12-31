@@ -1,13 +1,28 @@
-# Hide YouTube Mini Player
+# YouTidy
 
-A Chrome extension that automatically closes the YouTube mini player and prevents it from opening.
+A Chrome extension that tidies up YouTube's player interface - hide unwanted controls, lock your preferred view mode, and block distracting hotkeys.
 
 ## Features
 
-- **Auto-close mini player** - Automatically clicks the close button when the mini player appears (not just hiding the element)
+### Mini Player Controls
+- **Auto-close mini player** - Automatically closes the mini player when it appears
 - **Block "i" hotkey** - Prevents the keyboard shortcut that opens the mini player
-- **Hide context menu option** - Removes the "Mini player" option from right-click menus
-- **Continue Watching control** - Toggle to auto-close the premium "Continue Watching" mini player (configurable)
+- **Hide context menu option** - Removes "Mini player" from right-click menus
+- **Continue Watching control** - Toggle to auto-close the premium "Continue Watching" mini player
+
+### View Mode
+- **Preferred view mode** - Choose between Default or Theater (Cinema) mode
+- **Lock view mode** - Automatically applies your preferred mode and blocks the "t" hotkey
+
+### Hotkey Blocking
+- **Block "Play on TV" hotkey (c)** - Prevents accidental casting
+- **Block autoplay hotkey (shift+n)** - Prevents autoplay shortcuts
+
+### Hide Player Controls
+- **Hide mini player button** - Removes the miniplayer icon from controls
+- **Hide "Play on TV" button** - Removes the cast icon
+- **Hide theater mode button** - Removes the theater toggle icon
+- **Hide autoplay toggle** - Removes the autoplay switch
 
 ## Installation
 
@@ -21,15 +36,7 @@ A Chrome extension that automatically closes the YouTube mini player and prevent
 
 ### Usage
 
-Once installed, the extension works automatically on all YouTube pages:
-
-- The mini player will be closed immediately when it tries to open
-- The "i" keyboard shortcut is blocked (except when typing in input fields)
-- Right-click menu no longer shows the mini player option
-
-Click the extension icon in the toolbar to access settings:
-
-- **Close "Continue Watching" mini player** - Toggle whether to auto-close the premium continue watching feature
+Click the extension icon in the toolbar to access settings. All toggles apply immediately - no page refresh needed.
 
 ## Files
 
@@ -54,9 +61,9 @@ The extension uses:
 
 1. **MutationObserver** - Watches for DOM changes to detect when mini players appear
 2. **Event capturing** - Intercepts keyboard events before YouTube's handlers
-3. **Chrome Storage API** - Syncs settings across devices
+3. **CSS injection** - Hides unwanted player control buttons
+4. **Chrome Storage API** - Syncs settings across devices
 
 ## License
 
-MIT License - feel free to modify and distribute.
-
+MIT License - see [LICENSE](LICENSE) for details.

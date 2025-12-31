@@ -1,6 +1,6 @@
 /**
- * Hide YouTube Mini Player Extension
- * Automatically closes the mini player and blocks the "i" hotkey
+ * YouTidy - Tidy up YouTube's player interface
+ * Hide unwanted controls, lock view modes, and block distracting hotkeys
  */
 
 (function() {
@@ -8,25 +8,169 @@
 
     // Settings (loaded from storage)
     let settings = {
-        closeContinueWatching: true  // Default: close the continue watching mini player
+        closeContinueWatching: true,
+        preferredViewMode: 'theater',
+        lockViewMode: true,
+        blockPlayOnTV: true,
+        blockAutoplay: true,
+        hideMiniPlayerBtn: true,
+        hidePlayOnTVBtn: true,
+        hideTheaterBtn: true,
+        hideAutoplayBtn: true
     };
+
+    // CSS style element for hiding controls
+    let hideControlsStyle = null;
 
     /**
      * Load settings from chrome.storage
      */
     function loadSettings() {
+        const settingKeys = [
+            'closeContinueWatching', 'preferredViewMode', 'lockViewMode', 
+            'blockPlayOnTV', 'blockAutoplay', 'hideMiniPlayerBtn', 
+            'hidePlayOnTVBtn', 'hideTheaterBtn', 'hideAutoplayBtn'
+        ];
+
         if (chrome.storage && chrome.storage.sync) {
-            chrome.storage.sync.get(['closeContinueWatching'], (result) => {
-                settings.closeContinueWatching = result.closeContinueWatching !== false;
+            chrome.storage.sync.get(settingKeys, (result) => {
+                settings.closeContinueWatching = result.closeContinueWatching ?? true;
+                settings.preferredViewMode = result.preferredViewMode ?? 'theater';
+                settings.lockViewMode = result.lockViewMode ?? true;
+                settings.blockPlayOnTV = result.blockPlayOnTV ?? true;
+                settings.blockAutoplay = result.blockAutoplay ?? true;
+                settings.hideMiniPlayerBtn = result.hideMiniPlayerBtn ?? true;
+                settings.hidePlayOnTVBtn = result.hidePlayOnTVBtn ?? true;
+                settings.hideTheaterBtn = result.hideTheaterBtn ?? true;
+                settings.hideAutoplayBtn = result.hideAutoplayBtn ?? true;
+                
+                // Apply preferred view mode on load
+                applyPreferredViewMode();
+                // Apply control hiding
+                applyHideControls();
             });
 
             // Listen for setting changes
             chrome.storage.onChanged.addListener((changes, namespace) => {
-                if (namespace === 'sync' && changes.closeContinueWatching) {
-                    settings.closeContinueWatching = changes.closeContinueWatching.newValue !== false;
+                if (namespace === 'sync') {
+                    if (changes.closeContinueWatching) {
+                        settings.closeContinueWatching = changes.closeContinueWatching.newValue ?? true;
+                    }
+                    if (changes.preferredViewMode) {
+                        settings.preferredViewMode = changes.preferredViewMode.newValue ?? 'theater';
+                        applyPreferredViewMode();
+                    }
+                    if (changes.lockViewMode) {
+                        settings.lockViewMode = changes.lockViewMode.newValue ?? true;
+                    }
+                    if (changes.blockPlayOnTV) {
+                        settings.blockPlayOnTV = changes.blockPlayOnTV.newValue ?? true;
+                    }
+                    if (changes.blockAutoplay) {
+                        settings.blockAutoplay = changes.blockAutoplay.newValue ?? true;
+                    }
+                    if (changes.hideMiniPlayerBtn) {
+                        settings.hideMiniPlayerBtn = changes.hideMiniPlayerBtn.newValue ?? true;
+                        applyHideControls();
+                    }
+                    if (changes.hidePlayOnTVBtn) {
+                        settings.hidePlayOnTVBtn = changes.hidePlayOnTVBtn.newValue ?? true;
+                        applyHideControls();
+                    }
+                    if (changes.hideTheaterBtn) {
+                        settings.hideTheaterBtn = changes.hideTheaterBtn.newValue ?? true;
+                        applyHideControls();
+                    }
+                    if (changes.hideAutoplayBtn) {
+                        settings.hideAutoplayBtn = changes.hideAutoplayBtn.newValue ?? true;
+                        applyHideControls();
+                    }
                 }
             });
         }
+    }
+
+    /**
+     * Apply CSS to hide player control buttons
+     */
+    function applyHideControls() {
+        // Remove existing style if present
+        if (hideControlsStyle) {
+            hideControlsStyle.remove();
+        }
+
+        const rules = [];
+
+        if (settings.hideMiniPlayerBtn) {
+            rules.push('.ytp-miniplayer-button { display: none !important; }');
+        }
+
+        if (settings.hidePlayOnTVBtn) {
+            rules.push('.ytp-remote-button { display: none !important; }');
+            rules.push('.ytp-cast-button { display: none !important; }');
+        }
+
+        if (settings.hideTheaterBtn) {
+            rules.push('.ytp-size-button { display: none !important; }');
+        }
+
+        if (settings.hideAutoplayBtn) {
+            rules.push('.ytp-autonav-toggle-button-container { display: none !important; }');
+            rules.push('.ytp-button[data-tooltip-target-id="ytp-autonav-toggle-button"] { display: none !important; }');
+        }
+
+        if (rules.length > 0) {
+            hideControlsStyle = document.createElement('style');
+            hideControlsStyle.id = 'yt-hide-controls-style';
+            hideControlsStyle.textContent = rules.join('\n');
+            document.head.appendChild(hideControlsStyle);
+        }
+    }
+
+    /**
+     * Apply the preferred view mode (default or theater)
+     */
+    function applyPreferredViewMode() {
+        // Only apply on watch pages
+        if (!window.location.pathname.includes('/watch')) return;
+
+        const player = document.querySelector('#movie_player');
+        if (!player) {
+            // Retry after a delay if player not found yet
+            setTimeout(applyPreferredViewMode, 500);
+            return;
+        }
+
+        const isTheaterMode = document.querySelector('ytd-watch-flexy')?.hasAttribute('theater');
+        
+        if (settings.preferredViewMode === 'theater' && !isTheaterMode) {
+            // Switch to theater mode
+            const theaterButton = document.querySelector('.ytp-size-button');
+            if (theaterButton) theaterButton.click();
+        } else if (settings.preferredViewMode === 'default' && isTheaterMode) {
+            // Switch to default mode
+            const theaterButton = document.querySelector('.ytp-size-button');
+            if (theaterButton) theaterButton.click();
+        }
+    }
+
+    /**
+     * Set up observer to apply view mode when navigating to videos
+     */
+    function setupViewModeObserver() {
+        let lastUrl = location.href;
+        
+        const observer = new MutationObserver(() => {
+            if (location.href !== lastUrl) {
+                lastUrl = location.href;
+                if (window.location.pathname.includes('/watch')) {
+                    // Delay to ensure page is loaded
+                    setTimeout(applyPreferredViewMode, 1000);
+                }
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 
     /**
@@ -286,18 +430,45 @@
     }
 
     /**
-     * Block the "i" hotkey that opens the mini player
+     * Block hotkeys based on settings
      * Uses capture phase to intercept before YouTube's handlers
      */
     function setupHotkeyBlocker() {
         document.addEventListener('keydown', (event) => {
-            // Only block 'i' key when not in an input field
-            if ((event.key === 'i' || event.key === 'I') && !isInputField(event.target)) {
-                // Don't block if modifier keys are pressed (Ctrl+I, Alt+I, etc.)
-                if (!event.ctrlKey && !event.altKey && !event.metaKey) {
-                    event.stopPropagation();
-                    event.preventDefault();
-                }
+            // Skip if in an input field
+            if (isInputField(event.target)) return;
+
+            const key = event.key.toLowerCase();
+
+            // Block shift+n (next with autoplay) if autoplay blocking is enabled
+            if (key === 'n' && event.shiftKey && settings.blockAutoplay) {
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+
+            // Skip other checks if modifier keys are pressed
+            if (event.ctrlKey || event.altKey || event.metaKey) return;
+
+            // Block 'i' key (mini player) - always blocked
+            if (key === 'i') {
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+
+            // Block 't' key (theater mode toggle) if view mode is locked
+            if (key === 't' && settings.lockViewMode) {
+                event.stopPropagation();
+                event.preventDefault();
+                return;
+            }
+
+            // Block 'c' key (play on TV / cast) if setting is enabled
+            if (key === 'c' && settings.blockPlayOnTV) {
+                event.stopPropagation();
+                event.preventDefault();
+                return;
             }
         }, true); // true = capture phase
     }
@@ -311,6 +482,7 @@
         setupHotkeyBlocker();
         setupContextMenuObserver();
         setupContinueWatchingObserver();
+        setupViewModeObserver();
     }
 
     // Initialize when DOM is ready

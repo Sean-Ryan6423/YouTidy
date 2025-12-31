@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hide YouTube Mini Player</title>
+  <title>YouTidy</title>
   <style>
     * {
       margin: 0;
@@ -101,6 +101,35 @@
       margin: 12px 0;
     }
 
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #ff4757;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      margin-top: 4px;
+    }
+
+    .select-input {
+      background: #3a3a4a;
+      color: #e8e8e8;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .select-input:hover {
+      background: #4a4a5a;
+    }
+
+    .select-input:focus {
+      box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.3);
+    }
+
     .status {
       font-size: 11px;
       color: #666;
@@ -110,12 +139,87 @@
   </style>
 </head>
 <body>
-  <h1>🎬 Mini Player Settings</h1>
+  <h1>✨ YouTidy Settings</h1>
+  
+  <div class="section-title">Mini Player</div>
   
   <div class="setting">
     <span class="setting-label">Close "Continue Watching" mini player</span>
     <label class="toggle">
       <input type="checkbox" id="closeContinueWatching">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-title">View Mode</div>
+
+  <div class="setting">
+    <span class="setting-label">Preferred view mode</span>
+    <select id="preferredViewMode" class="select-input">
+      <option value="default">Default</option>
+      <option value="theater">Theater (Cinema)</option>
+    </select>
+  </div>
+
+  <div class="setting">
+    <span class="setting-label">Lock view mode (block 't' hotkey)</span>
+    <label class="toggle">
+      <input type="checkbox" id="lockViewMode">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-title">Hotkeys</div>
+
+  <div class="setting">
+    <span class="setting-label">Block "Play on TV" hotkey (c)</span>
+    <label class="toggle">
+      <input type="checkbox" id="blockPlayOnTV">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="setting">
+    <span class="setting-label">Block autoplay hotkey (shift+n)</span>
+    <label class="toggle">
+      <input type="checkbox" id="blockAutoplay">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-title">Hide Player Controls</div>
+
+  <div class="setting">
+    <span class="setting-label">Hide mini player button</span>
+    <label class="toggle">
+      <input type="checkbox" id="hideMiniPlayerBtn">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="setting">
+    <span class="setting-label">Hide "Play on TV" button</span>
+    <label class="toggle">
+      <input type="checkbox" id="hidePlayOnTVBtn">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="setting">
+    <span class="setting-label">Hide theater mode button</span>
+    <label class="toggle">
+      <input type="checkbox" id="hideTheaterBtn">
+      <span class="toggle-slider"></span>
+    </label>
+  </div>
+
+  <div class="setting">
+    <span class="setting-label">Hide autoplay toggle</span>
+    <label class="toggle">
+      <input type="checkbox" id="hideAutoplayBtn">
       <span class="toggle-slider"></span>
     </label>
   </div>

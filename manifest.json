@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Hide YouTube Mini Player",
-  "version": "1.0.1",
-  "description": "Automatically closes the YouTube mini player and disables the 'i' hotkey that opens it",
+  "name": "YouTidy",
+  "version": "2.0.0",
+  "description": "Tidy up YouTube's player - hide unwanted controls, lock view modes, and block distracting hotkeys",
   "permissions": ["storage"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Hide YouTube Mini Player",
+    "default_title": "YouTidy",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
