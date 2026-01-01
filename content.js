@@ -475,6 +475,39 @@
     }
 
     /**
+     * Add "(Enter)" hint to the Jump ahead button text
+     */
+    function addEnterHintToButton(button) {
+        const buttonText = button.querySelector('.yt-spec-button-shape-next__button-text-content');
+        if (buttonText && !buttonText.dataset.enterHintAdded) {
+            const originalText = buttonText.textContent.trim();
+            if (originalText.toLowerCase().includes('jump')) {
+                buttonText.textContent = `${originalText} (Enter)`;
+                buttonText.dataset.enterHintAdded = 'true';
+            }
+        }
+    }
+
+    /**
+     * Set up observer to add Enter hint to Jump ahead button when it appears
+     */
+    function setupJumpAheadButtonObserver() {
+        const observer = new MutationObserver(() => {
+            const jumpAheadButton = document.querySelector(
+                '.ytp-timely-actions-overlay button.yt-spec-button-shape-next'
+            );
+            if (jumpAheadButton && jumpAheadButton.offsetParent !== null) {
+                addEnterHintToButton(jumpAheadButton);
+            }
+        });
+
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+    }
+
+    /**
      * Set up Enter key to click "Jump ahead" button when visible
      * This allows quickly skipping sponsors/intros when the overlay appears
      */
@@ -515,6 +548,7 @@
         setupMiniPlayerObserver();
         setupHotkeyBlocker();
         setupJumpAheadHotkey();
+        setupJumpAheadButtonObserver();
         setupContextMenuObserver();
         setupContinueWatchingObserver();
         setupViewModeObserver();

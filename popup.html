@@ -136,6 +136,33 @@
       text-align: center;
       margin-top: 8px;
     }
+
+    .info-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255, 71, 87, 0.1);
+      border-radius: 8px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #aaa;
+      border: 1px solid rgba(255, 71, 87, 0.2);
+    }
+
+    .info-icon {
+      font-size: 14px;
+    }
+
+    kbd {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 11px;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -187,6 +214,11 @@
       <input type="checkbox" id="blockAutoplay">
       <span class="toggle-slider"></span>
     </label>
+  </div>
+
+  <div class="info-note">
+    <span class="info-icon">⌨️</span>
+    <span>Press <kbd>Enter</kbd> to skip when "Jump ahead" appears</span>
   </div>
 
   <div class="divider"></div>
