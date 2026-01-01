@@ -432,6 +432,7 @@
     /**
      * Block hotkeys based on settings
      * Uses capture phase to intercept before YouTube's handlers
+     * Hotkeys are blocked when the corresponding button is hidden
      */
     function setupHotkeyBlocker() {
         document.addEventListener('keydown', (event) => {
@@ -440,8 +441,8 @@
 
             const key = event.key.toLowerCase();
 
-            // Block shift+n (next with autoplay) if autoplay blocking is enabled
-            if (key === 'n' && event.shiftKey && settings.blockAutoplay) {
+            // Block shift+n (next with autoplay) if autoplay button is hidden or blocking is enabled
+            if (key === 'n' && event.shiftKey && (settings.hideAutoplayBtn || settings.blockAutoplay)) {
                 event.stopPropagation();
                 event.preventDefault();
                 return;
@@ -450,27 +451,60 @@
             // Skip other checks if modifier keys are pressed
             if (event.ctrlKey || event.altKey || event.metaKey) return;
 
-            // Block 'i' key (mini player) - always blocked
-            if (key === 'i') {
+            // Block 'i' key (mini player) if mini player button is hidden
+            if (key === 'i' && settings.hideMiniPlayerBtn) {
                 event.stopPropagation();
                 event.preventDefault();
                 return;
             }
 
-            // Block 't' key (theater mode toggle) if view mode is locked
-            if (key === 't' && settings.lockViewMode) {
+            // Block 't' key (theater mode toggle) if theater button is hidden or view mode is locked
+            if (key === 't' && (settings.hideTheaterBtn || settings.lockViewMode)) {
                 event.stopPropagation();
                 event.preventDefault();
                 return;
             }
 
-            // Block 'c' key (play on TV / cast) if setting is enabled
-            if (key === 'c' && settings.blockPlayOnTV) {
+            // Block 'c' key (play on TV / cast) if play on TV button is hidden or blocking is enabled
+            if (key === 'c' && (settings.hidePlayOnTVBtn || settings.blockPlayOnTV)) {
                 event.stopPropagation();
                 event.preventDefault();
                 return;
             }
         }, true); // true = capture phase
+    }
+
+    /**
+     * Set up Enter key to click "Jump ahead" button when visible
+     * This allows quickly skipping sponsors/intros when the overlay appears
+     */
+    function setupJumpAheadHotkey() {
+        document.addEventListener('keydown', (event) => {
+            // Only trigger on Enter key
+            if (event.key !== 'Enter') return;
+
+            // Skip if in an input field
+            if (isInputField(event.target)) return;
+
+            // Skip if modifier keys are pressed
+            if (event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) return;
+
+            // Look for the "Jump ahead" button in the timely actions overlay
+            const jumpAheadButton = document.querySelector(
+                '.ytp-timely-actions-overlay button.yt-spec-button-shape-next'
+            );
+
+            // Check if button exists and is visible
+            if (jumpAheadButton && jumpAheadButton.offsetParent !== null) {
+                // Verify it's the "Jump ahead" button by checking text content
+                const buttonText = jumpAheadButton.querySelector('.yt-spec-button-shape-next__button-text-content');
+                if (buttonText && buttonText.textContent.trim().toLowerCase().includes('jump')) {
+                    jumpAheadButton.click();
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            }
+        }, true); // capture phase
     }
 
     /**
@@ -480,6 +514,7 @@
         loadSettings();
         setupMiniPlayerObserver();
         setupHotkeyBlocker();
+        setupJumpAheadHotkey();
         setupContextMenuObserver();
         setupContinueWatchingObserver();
         setupViewModeObserver();
