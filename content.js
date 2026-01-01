@@ -13,7 +13,6 @@
         lockViewMode: true,
         blockPlayOnTV: true,
         blockAutoplay: true,
-        jumpAheadKey: 'Enter',
         hideMiniPlayerBtn: true,
         hidePlayOnTVBtn: true,
         hideTheaterBtn: true,
@@ -29,7 +28,7 @@
     function loadSettings() {
         const settingKeys = [
             'closeContinueWatching', 'preferredViewMode', 'lockViewMode', 
-            'blockPlayOnTV', 'blockAutoplay', 'jumpAheadKey', 'hideMiniPlayerBtn', 
+            'blockPlayOnTV', 'blockAutoplay', 'hideMiniPlayerBtn', 
             'hidePlayOnTVBtn', 'hideTheaterBtn', 'hideAutoplayBtn'
         ];
 
@@ -40,7 +39,6 @@
                 settings.lockViewMode = result.lockViewMode ?? true;
                 settings.blockPlayOnTV = result.blockPlayOnTV ?? true;
                 settings.blockAutoplay = result.blockAutoplay ?? true;
-                settings.jumpAheadKey = result.jumpAheadKey ?? 'Enter';
                 settings.hideMiniPlayerBtn = result.hideMiniPlayerBtn ?? true;
                 settings.hidePlayOnTVBtn = result.hidePlayOnTVBtn ?? true;
                 settings.hideTheaterBtn = result.hideTheaterBtn ?? true;
@@ -70,11 +68,6 @@
                     }
                     if (changes.blockAutoplay) {
                         settings.blockAutoplay = changes.blockAutoplay.newValue ?? true;
-                    }
-                    if (changes.jumpAheadKey) {
-                        settings.jumpAheadKey = changes.jumpAheadKey.newValue ?? 'Enter';
-                        // Update any existing button text with new key
-                        updateJumpAheadButtonText();
                     }
                     if (changes.hideMiniPlayerBtn) {
                         settings.hideMiniPlayerBtn = changes.hideMiniPlayerBtn.newValue ?? true;
@@ -482,57 +475,21 @@
     }
 
     /**
-     * Get display name for a key
+     * Add "(Enter)" hint to the Jump ahead button text
      */
-    function getKeyDisplayName(key) {
-        const displayNames = {
-            'Enter': 'Enter',
-            ' ': 'Space',
-            'ArrowUp': '↑',
-            'ArrowDown': '↓',
-            'ArrowLeft': '←',
-            'ArrowRight': '→',
-            'Escape': 'Esc'
-        };
-        return displayNames[key] || key.toUpperCase();
-    }
-
-    /**
-     * Add hotkey hint to the Jump ahead button text
-     */
-    function addHotkeyHintToButton(button) {
+    function addEnterHintToButton(button) {
         const buttonText = button.querySelector('.yt-spec-button-shape-next__button-text-content');
-        if (buttonText) {
-            const currentText = buttonText.textContent.trim();
-            const keyDisplay = getKeyDisplayName(settings.jumpAheadKey);
-            
-            // Check if we already added a hint (look for parentheses)
-            if (currentText.includes('(') && currentText.includes(')')) {
-                // Update existing hint
-                const baseText = currentText.replace(/\s*\([^)]+\)$/, '');
-                buttonText.textContent = `${baseText} (${keyDisplay})`;
-            } else if (currentText.toLowerCase().includes('jump')) {
-                // Add new hint
-                buttonText.textContent = `${currentText} (${keyDisplay})`;
+        if (buttonText && !buttonText.dataset.enterHintAdded) {
+            const originalText = buttonText.textContent.trim();
+            if (originalText.toLowerCase().includes('jump')) {
+                buttonText.textContent = `${originalText} (Enter)`;
+                buttonText.dataset.enterHintAdded = 'true';
             }
-            buttonText.dataset.hotkeyHintAdded = 'true';
         }
     }
 
     /**
-     * Update existing Jump ahead button text when key changes
-     */
-    function updateJumpAheadButtonText() {
-        const jumpAheadButton = document.querySelector(
-            '.ytp-timely-actions-overlay button.yt-spec-button-shape-next'
-        );
-        if (jumpAheadButton && jumpAheadButton.offsetParent !== null) {
-            addHotkeyHintToButton(jumpAheadButton);
-        }
-    }
-
-    /**
-     * Set up observer to add hotkey hint to Jump ahead button when it appears
+     * Set up observer to add Enter hint to Jump ahead button when it appears
      */
     function setupJumpAheadButtonObserver() {
         const observer = new MutationObserver(() => {
@@ -540,7 +497,7 @@
                 '.ytp-timely-actions-overlay button.yt-spec-button-shape-next'
             );
             if (jumpAheadButton && jumpAheadButton.offsetParent !== null) {
-                addHotkeyHintToButton(jumpAheadButton);
+                addEnterHintToButton(jumpAheadButton);
             }
         });
 
@@ -551,13 +508,13 @@
     }
 
     /**
-     * Set up custom key to click "Jump ahead" button when visible
+     * Set up Enter key to click "Jump ahead" button when visible
      * This allows quickly skipping sponsors/intros when the overlay appears
      */
     function setupJumpAheadHotkey() {
         document.addEventListener('keydown', (event) => {
-            // Only trigger on the configured key
-            if (event.key !== settings.jumpAheadKey) return;
+            // Only trigger on Enter key
+            if (event.key !== 'Enter') return;
 
             // Skip if in an input field
             if (isInputField(event.target)) return;

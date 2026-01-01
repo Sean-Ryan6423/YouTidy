@@ -163,29 +163,6 @@
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
-
-    .key-input {
-      background: #3a3a4a;
-      color: #e8e8e8;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-family: 'Consolas', 'Monaco', monospace;
-      text-align: center;
-      width: 80px;
-      cursor: pointer;
-      outline: none;
-    }
-
-    .key-input:hover {
-      background: #4a4a5a;
-    }
-
-    .key-input:focus {
-      box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.3);
-      background: #4a4a5a;
-    }
   </style>
 </head>
 <body>
@@ -239,9 +216,9 @@
     </label>
   </div>
 
-  <div class="setting">
-    <span class="setting-label">Jump ahead hotkey</span>
-    <input type="text" id="jumpAheadKey" class="key-input" readonly placeholder="Press a key...">
+  <div class="info-note">
+    <span class="info-icon">⌨️</span>
+    <span>Press <kbd>Enter</kbd> to skip when "Jump ahead" appears</span>
   </div>
 
   <div class="divider"></div>

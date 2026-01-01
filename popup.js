@@ -8,7 +8,6 @@ const preferredViewModeSelect = document.getElementById('preferredViewMode');
 const lockViewModeToggle = document.getElementById('lockViewMode');
 const blockPlayOnTVToggle = document.getElementById('blockPlayOnTV');
 const blockAutoplayToggle = document.getElementById('blockAutoplay');
-const jumpAheadKeyInput = document.getElementById('jumpAheadKey');
 const hideMiniPlayerBtnToggle = document.getElementById('hideMiniPlayerBtn');
 const hidePlayOnTVBtnToggle = document.getElementById('hidePlayOnTVBtn');
 const hideTheaterBtnToggle = document.getElementById('hideTheaterBtn');
@@ -21,26 +20,11 @@ const defaults = {
     lockViewMode: true,
     blockPlayOnTV: true,
     blockAutoplay: true,
-    jumpAheadKey: 'Enter',
     hideMiniPlayerBtn: true,
     hidePlayOnTVBtn: true,
     hideTheaterBtn: true,
     hideAutoplayBtn: true
 };
-
-// Helper to get display name for a key
-function getKeyDisplayName(key) {
-    const displayNames = {
-        'Enter': 'Enter',
-        ' ': 'Space',
-        'ArrowUp': '↑',
-        'ArrowDown': '↓',
-        'ArrowLeft': '←',
-        'ArrowRight': '→',
-        'Escape': 'Esc'
-    };
-    return displayNames[key] || key.toUpperCase();
-}
 
 // Load saved settings
 chrome.storage.sync.get(Object.keys(defaults), (result) => {
@@ -49,7 +33,6 @@ chrome.storage.sync.get(Object.keys(defaults), (result) => {
     lockViewModeToggle.checked = result.lockViewMode ?? defaults.lockViewMode;
     blockPlayOnTVToggle.checked = result.blockPlayOnTV ?? defaults.blockPlayOnTV;
     blockAutoplayToggle.checked = result.blockAutoplay ?? defaults.blockAutoplay;
-    jumpAheadKeyInput.value = getKeyDisplayName(result.jumpAheadKey ?? defaults.jumpAheadKey);
     hideMiniPlayerBtnToggle.checked = result.hideMiniPlayerBtn ?? defaults.hideMiniPlayerBtn;
     hidePlayOnTVBtnToggle.checked = result.hidePlayOnTVBtn ?? defaults.hidePlayOnTVBtn;
     hideTheaterBtnToggle.checked = result.hideTheaterBtn ?? defaults.hideTheaterBtn;
@@ -75,16 +58,6 @@ blockPlayOnTVToggle.addEventListener('change', () => {
 
 blockAutoplayToggle.addEventListener('change', () => {
     chrome.storage.sync.set({ blockAutoplay: blockAutoplayToggle.checked });
-});
-
-jumpAheadKeyInput.addEventListener('keydown', (event) => {
-    event.preventDefault();
-    const key = event.key;
-    // Don't allow modifier keys alone
-    if (['Control', 'Alt', 'Shift', 'Meta'].includes(key)) return;
-    
-    jumpAheadKeyInput.value = getKeyDisplayName(key);
-    chrome.storage.sync.set({ jumpAheadKey: key });
 });
 
 hideMiniPlayerBtnToggle.addEventListener('change', () => {
