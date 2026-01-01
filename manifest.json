@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTidy",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Tidy up YouTube's player - hide unwanted controls, lock view modes, and block distracting hotkeys",
   "permissions": ["storage"],
   "action": {
