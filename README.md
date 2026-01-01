@@ -14,6 +14,10 @@ A Chrome extension that tidies up YouTube's player interface - hide unwanted con
 - **Preferred view mode** - Choose between Default or Theater (Cinema) mode
 - **Lock view mode** - Automatically applies your preferred mode and blocks the "t" hotkey
 
+### Keyboard Shortcuts
+- **Jump ahead with Enter** - Press Enter to click the "Jump ahead" button when it appears (skip sponsors/intros)
+- **Smart hotkey blocking** - Hotkeys are automatically disabled when their corresponding buttons are hidden
+
 ### Hotkey Blocking
 - **Block "Play on TV" hotkey (c)** - Prevents accidental casting
 - **Block autoplay hotkey (shift+n)** - Prevents autoplay shortcuts
